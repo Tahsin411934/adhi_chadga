@@ -9,6 +9,14 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+<!-- Add this to your index.html -->
+<link
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  rel="stylesheet"
+/>
+
+<!-- Roboto Font -->
+<link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
 
     <!-- Vite -->
     @vite(['resources/js/app.js', 'resources/css/app.css'])
@@ -17,5 +25,6 @@
     <div id="app" class="font-poppins">
         <example-component></example-component>
     </div>
+    
 </body>
 </html>

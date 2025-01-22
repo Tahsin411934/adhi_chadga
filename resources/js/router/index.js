@@ -22,6 +22,29 @@ const routes = [
         name: 'Login',
         component: () => import('../components/Auth/LoginForm.vue'), // Lazy-loaded
     },
+    {
+        path: '/dashboard',
+        name: 'Layout',
+        component: () => import('../Pages/Dashboard/Layout.vue'),  // The parent component for the dashboard
+        children: [
+          {
+            path: '/dashboard',  // Relative path for the login route under the dashboard
+            name: 'Dashoboard',
+            component: () => import('../Pages/Dashboard/Dashboard.vue'),
+          },
+          {
+            path: '/dashboard/catagories',  // Relative path for the login route under the dashboard
+            name: 'Catagories',
+            component: () => import('../Pages/Dashboard/Catagory.vue'),
+          },
+          {
+            path: '/dashboard/items',  // Relative path for the login route under the dashboard
+            name: 'Item',
+            component: () => import('../Pages/Dashboard/FoodItem.vue'),
+          },
+        ]
+      }
+      
 ];
 
 // Create the router instance
