@@ -42,6 +42,7 @@
         >
           Blog
         </router-link>
+        
 
         <!-- Conditional Render: Show Create Account button or Logout button -->
         <div v-if="!isLoggedIn">
@@ -55,6 +56,7 @@
             <router-link to="/dashboard" class="dropdown-item">Dashboard</router-link>
           </div>
         </div>
+        
         <div v-else>
           <!-- Profile Dropdown for Logged-in Users -->
           <div class="dropdown d-inline-block" ref="profileDropdown">
@@ -72,8 +74,14 @@
             </div>
           </div>
         </div>
+        <div class="">
+          <Cart/>
+        </div>
       </nav>
-
+      <div class="d-flex d-lg-none">
+        <Cart/>
+      </div>
+      
       <!-- Hamburger Button (Visible on Mobile) -->
       <button class="d-md-none btn btn-link" @click="toggleModal">
         <i class="fas fa-bars"></i>
@@ -116,9 +124,13 @@
 import axios from "axios";
 import Toastify from 'toastify-js';
 import 'toastify-js/src/toastify.css'; // Import the CSS for Toastify
+import Cart from "../Cart/cart.vue";
 
 export default {
   name: "Navbar",
+  components: {
+    Cart
+  },
   data() {
     return {
       showDropdown: false,

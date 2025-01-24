@@ -31,12 +31,12 @@
                     <div class="text-muted small">৳ {{ item.price }} each</div>
                   </div>
   
-                  <div class="d-flex align-items-center">
-                    <button class="btn btn-light btn-sm me-2" @click="decrementItem(item.id)">
+                  <div class="quantity-controls">
+                    <button class="btn btn-light btn-sm" @click="decrementItem(item.id)">
                       <i class="fas fa-minus"></i>
                     </button>
                     <span>{{ item.quantity }}</span>
-                    <button class="btn btn-light btn-sm ms-2" @click="incrementItem(item.id)">
+                    <button class="btn btn-light btn-sm" @click="incrementItem(item.id)">
                       <i class="fas fa-plus"></i>
                     </button>
                   </div>
@@ -54,6 +54,9 @@
             <div class="modal-footer">
               <div v-if="cartItems.length > 0" class="w-100 text-end">
                 <h5>Total: ৳ {{ cartTotalPrice }}</h5>
+                <button class="btn btn-primary btn-sm me-2" @click="submitCart">
+                  Submit Data
+                </button>
                 <button class="btn btn-success btn-sm me-2" @click="checkout">
                   Checkout
                 </button>
@@ -76,7 +79,7 @@
     computed: {
       ...mapGetters(["cartItems", "cartTotalPrice"]),
       totalItems() {
-        return this.cartItems.reduce((total, item) => total + item.quantity, 0);
+        return this.cartItems.length; // Count unique items
       },
     },
     methods: {
@@ -106,6 +109,35 @@
           modal.hide();
         }
       },
+      submitCart() {
+        if (this.cartItems.length === 0) {
+          console.log("Cart is empty. No data to submit.");
+          return;
+        }
+  
+        const cartData = {
+          items: this.cartItems.map(item => ({
+            id: item.id,
+            name: item.name,
+            quantity: item.quantity,
+            total: item.price * item.quantity,
+          })),
+          totalPrice: this.cartTotalPrice,
+        };
+  
+        // Log the cart data to the console
+        console.log("Cart Data Submitted:", cartData);
+  
+        // Future: Replace console.log with an API call
+        // Example:
+        // axios.post('/api/submit-cart', cartData)
+        //   .then(response => {
+        //     console.log('Cart data submitted successfully:', response.data);
+        //   })
+        //   .catch(error => {
+        //     console.error('Error submitting cart data:', error);
+        //   });
+      },
     },
   };
   </script>
@@ -118,6 +150,19 @@
   }
   .badge {
     font-size: 0.75rem;
+  }
+  .quantity-controls {
+    display: flex;
+    align-items: center;
+  }
+  .quantity-controls button {
+    margin: 0 5px; /* Consistent margin on both sides of the buttons */
+    padding: 5px 10px; /* Proper padding for buttons */
+    font-size: 0.9rem; /* Adjust size to match quantity text */
+  }
+  .quantity-controls span {
+    margin: 0 5px; /* Ensure spacing between buttons and quantity */
+    font-weight: bold;
   }
   </style>
   
