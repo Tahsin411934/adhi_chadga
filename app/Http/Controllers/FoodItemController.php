@@ -7,92 +7,99 @@ use Illuminate\Http\Request;
 
 class FoodItemController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $foodItems = FoodItem::all();
-        return response()->json($foodItems);
+        try {
+            $foodItems = FoodItem::with('category')->get(); // Fetch related category
+            return response()->json($foodItems, 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to fetch food items.',
+                'details' => $e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'image_url' => 'nullable|string',
-            'category_id' => 'required|integer',
-            'available' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:100',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric|min:0',
+                'image_url' => 'nullable|file|image|max:2048',
+                'category_id' => 'required|integer|exists:categories,id',
+                'available' => 'boolean',
+            ]);
 
-        $foodItem = FoodItem::create($validated);
+            // Save image if provided
+            if ($request->hasFile('image_url')) {
+                $validated['image_url'] = $request->file('image_url')->store('food-images', 'public');
+            }
 
-        return response()->json([
-            'message' => 'Food item created successfully.',
-            'data' => $foodItem,
-        ], 201);
+            $foodItem = FoodItem::create($validated);
+
+            return response()->json([
+                'message' => 'Food item created successfully.',
+                'data' => $foodItem,
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to create food item.',
+                'details' => $e->getMessage(),
+            ], 400);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(FoodItem $foodItem)
     {
-        return response()->json($foodItem);
+        return response()->json($foodItem, 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(FoodItem $foodItem)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, FoodItem $foodItem)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:100',
-            'description' => 'nullable|string',
-            'price' => 'required|numeric|min:0',
-            'image_url' => 'nullable|string',
-            'category_id' => 'required|integer|exists:categories,id',
-            'available' => 'boolean',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:100',
+                'description' => 'nullable|string',
+                'price' => 'required|numeric|min:0',
+                'image_url' => 'nullable|file|image|max:2048',
+                'category_id' => 'required|integer|exists:categories,id',
+                'available' => 'boolean',
+            ]);
 
-        $foodItem->update($validated);
+            // Update image if provided
+            if ($request->hasFile('image_url')) {
+                $validated['image_url'] = $request->file('image_url')->store('food-images', 'public');
+            }
 
-        return response()->json([
-            'message' => 'Food item updated successfully.',
-            'data' => $foodItem,
-        ]);
+            $foodItem->update($validated);
+
+            return response()->json([
+                'message' => 'Food item updated successfully.',
+                'data' => $foodItem,
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to update food item.',
+                'details' => $e->getMessage(),
+            ], 400);
+        }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(FoodItem $foodItem)
     {
-        $foodItem->delete();
+        try {
+            $foodItem->delete();
 
-        return response()->json([
-            'message' => 'Food item deleted successfully.',
-        ]);
+            return response()->json([
+                'message' => 'Food item deleted successfully.',
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Failed to delete food item.',
+                'details' => $e->getMessage(),
+            ], 400);
+        }
     }
 }

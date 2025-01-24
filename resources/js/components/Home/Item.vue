@@ -1,7 +1,9 @@
 <template>
   <div class="container mt-4">
+    <!-- Show header -->
+    <div class="fs-3 mb-5 fw-semibold">Recommended: </div>
+
     <!-- Show loading state -->
-    <div class="fs-3 mb-5 fw-semibold">Recomanded: </div>
     <div v-if="loading" class="text-center">
       <p>লোড হচ্ছে...</p>
     </div>
@@ -12,12 +14,8 @@
     </div>
 
     <!-- Show food items once data is fetched -->
-    <div v-else class="row row-cols-1 row-cols-sm-1 row-cols-md-3 g-4" >
-      <div
-        v-for="item in foodItems"
-        :key="item.id"
-        class="col"
-      >
+    <div v-else class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4">
+      <div v-for="item in foodItems" :key="item.id" class="col">
         <div class="card h-100" style="background-color: #f7fafc;">
           <img
             :src="item.image_url"
@@ -26,11 +24,11 @@
           />
           <div class="card-body d-flex flex-column">
             <h5 class="card-title">{{ item.name }}</h5>
-            <div class="d-flex justify-content-between align-items-center">
-              <p class="card-text">৳ {{ item.price }}</p>
-              <!-- Add Font Awesome icon here -->
-              <button class="btn btn-primary" @click="addToCart(item)">
-                <i class="fas fa-cart-plus"></i>
+            <div class="d-flex justify-content-between align-items-center mt-auto">
+              <p class="card-text mb-0">৳ {{ item.price }}</p>
+              <!-- Add to cart button -->
+              <button class="btn btn-dark btn-sm" @click="addToCart(item)">
+                <i class="fas fa-cart-plus"></i> Add to Cart
               </button>
             </div>
           </div>
@@ -41,6 +39,8 @@
 </template>
 
 <script>
+import axiosInstance from "../../utils/axiosInstance";
+
 export default {
   name: "FoodCardGrid",
   data() {
@@ -53,25 +53,22 @@ export default {
   methods: {
     async fetchFoodItems() {
       try {
-        const response = await fetch("http://localhost:8000/api/food-items");
-        if (!response.ok) {
-          throw new Error("ডাটা লোড করতে সমস্যা হয়েছে।");
-        }
-        const data = await response.json();
-        this.foodItems = data;
+        // Fetch food items using Axios
+        const response = await axiosInstance.get("/api/food-items");
+        this.foodItems = response.data;
       } catch (err) {
-        this.error = err.message;
+        this.error = err.response?.data?.message || "ডাটা লোড করতে সমস্যা হয়েছে।";
       } finally {
-        this.loading = false;
+        this.loading = false; // Set loading to false after fetching data
       }
     },
     addToCart(item) {
-      alert(`${item.name} added to cart!`);
-      // Implement actual add-to-cart functionality here
+      this.$store.dispatch("addToCart", item); // Dispatch action to add item to cart
     },
   },
   mounted() {
-    this.fetchFoodItems(); // Fetch data when component is mounted
+    // Fetch data when the component is mounted
+    this.fetchFoodItems();
   },
 };
 </script>

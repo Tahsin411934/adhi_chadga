@@ -1,7 +1,9 @@
 import './bootstrap';
 import { createApp } from 'vue';
-import App from './App.vue'; // Ensure this is your root Vue component
-import router from './router'; // Import the router
+import App from './App.vue'; // Root Vue component
+import router from './router'; // Import router
+import store from './store/index'; // Import Vuex store
+
 // Import Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 
@@ -9,6 +11,6 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 
 const app = createApp(App);
-
+app.use(store); // Register Vuex store
 app.use(router); // Register the router
-app.mount('#app');
+app.mount('#app'); // Mount the app

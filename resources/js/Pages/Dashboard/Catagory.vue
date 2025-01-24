@@ -229,7 +229,7 @@ export default {
         if (this.newCategoryImage) {
           formData.append('image', this.newCategoryImage);
         }
-
+console.log(formData)
         // Send the FormData to the API
         const res = await axiosInstance.post('/api/categories', formData, {
           headers: {
