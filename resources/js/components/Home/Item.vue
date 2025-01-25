@@ -14,19 +14,41 @@
     </div>
 
     <!-- Show food items once data is fetched -->
-    <div v-else class="row row-cols-2 row-cols-sm-2 row-cols-md-3 g-4">
+    <div v-else class="row row-cols-2 row-cols-sm-2 row-cols-md-4 h-100 g-4">
       <div v-for="item in foodItems" :key="item.id" class="col">
         <!-- Add click event to open the modal -->
-        <div class="card" style="background-color: #f7fafc" @click="viewCartModal(item)">
-          <div style="height: 210px">
-            <img :src="item.image_url" :alt="item.name" class="card-img-top h-50" />
+        <div class="p- card" style="background-color: #f7fafc" @click="viewCartModal(item)">
+          <div style="height: 210px" class="position-relative">
+            <img :src="item.image_url" :alt="item.name" class="card-img-top " style="height: 65%;" />
             <div class="card-body d-flex flex-column">
               <h5 class="card-title">{{ item.name }}</h5>
               <div class="d-flex justify-content-between align-items-center mt-auto">
                 <p class="card-text mb-0">৳ {{ item.price }}</p>
-                <!-- Add to cart button -->
-                <button class="btn btn-dark btn-sm" @click.stop="addToCart(item, 1)">
-                  <i class="fas fa-cart-plus"></i>
+                <!-- Quantity control in cart -->
+                <div v-if="isItemInCart(item)" class="d-flex align-items-center position-absolute bottom-50 end-0 bg-white mb-1">
+                  <!-- Show delete icon if quantity is 1 -->
+                  <button
+                    v-if="getItemQuantity(item) === 1"
+                    class="btn  btn-sm"
+                    @click.stop="removeFromCart(item)"
+                  >
+                    <i class="fas fa-trash"></i>
+                  </button>
+                  <!-- Decrease button for quantities > 1 -->
+                  <button
+                    v-else
+                    class="btn  btn-sm"
+                    @click.stop="decreaseQuantity(item)"
+                  >
+                    -
+                  </button>
+                  <span class="mx-2">{{ getItemQuantity(item) }}</span>
+                  <button class="btn  btn-sm" @click.stop="increaseQuantity(item)">
+                    +
+                  </button>
+                </div>
+                <button v-else class="btn btn-dark btn-sm position-absolute bottom-50 end-0" @click.stop="addToCart(item, 1)">
+                  <i class="fas fa-plus"></i>
                 </button>
               </div>
             </div>
@@ -39,7 +61,7 @@
     <div v-if="isModalOpen" class="custom-modal-overlay" @click.self="closeModal">
       <div class="custom-modal position-relative">
         <div class="custom-modal-header d-flex justify-content-between position-absolute">
-          <button @click="closeModal" class="close-btn rounded-circle p-2" >X</button>
+          <button @click="closeModal" class="close-btn rounded-circle p-2">X</button>
         </div>
         <div class="custom-modal-body">
           <div v-if="selectedItem">
@@ -81,9 +103,7 @@
                     >
                       -
                     </button>
-                    <span class="mx-3">
-                      {{ getSelectedItemQuantity(item) || 1 }}
-                    </span>
+                    <span class="mx-3">{{ getSelectedItemQuantity(item) || 1 }}</span>
                     <button
                       class="btn btn-outline-dark btn-sm"
                       @click="increaseQuantityForOther(item)"
@@ -96,7 +116,7 @@
             </div>
           </div>
           <div class="custom-modal-footer d-flex justify-content-between">
-          <div></div>
+            <div></div>
             <button class="btn btn-danger" @click="addAllToCart">
               Add Items to Cart
             </button>
@@ -115,13 +135,13 @@ export default {
   name: "FoodCardGrid",
   data() {
     return {
-      foodItems: [], // Array to hold food data
-      loading: true, // Loading state
-      error: null, // Error message
-      isModalOpen: false, // Modal visibility state
-      selectedItem: null, // Selected item for modal
-      selectedOtherItemsChecked: {}, // Object to track checked items
-      selectedOtherItemsQuantities: {}, // Object to track item quantities
+      foodItems: [],
+      loading: true,
+      error: null,
+      isModalOpen: false,
+      selectedItem: null,
+      selectedOtherItemsChecked: {},
+      selectedOtherItemsQuantities: {},
     };
   },
   methods: {
@@ -148,7 +168,6 @@ export default {
     },
     addAllToCart() {
       const itemsToAdd = [
-       
         ...this.foodItems
           .filter((item) => this.selectedOtherItemsChecked[item.id])
           .map((item) => ({
@@ -162,7 +181,6 @@ export default {
       });
 
       this.closeModal();
-      
     },
     increaseQuantityForOther(item) {
       if (!this.selectedOtherItemsQuantities[item.id]) {
@@ -175,6 +193,38 @@ export default {
       if (this.selectedOtherItemsQuantities[item.id] > 1) {
         this.selectedOtherItemsQuantities[item.id] -= 1;
       }
+    },
+    increaseQuantity(item) {
+      const existingItem = this.$store.state.cart.find((cartItem) => cartItem.id === item.id);
+      if (existingItem) {
+        existingItem.quantity += 1;
+      }
+    },
+    decreaseQuantity(item) {
+      const existingItem = this.$store.state.cart.find((cartItem) => cartItem.id === item.id);
+      if (existingItem.quantity > 1) {
+        existingItem.quantity -= 1;
+      } else {
+        this.removeFromCart(item);
+      }
+    },
+    removeFromCart(item) {
+      this.$store.dispatch("removeFromCart", item.id);
+      Toastify({
+        text: `${item.name} removed from cart.`,
+        duration: 3000,
+        close: true,
+        gravity: "top",
+        position: "right",
+        backgroundColor: "#FF6F61",
+      }).showToast();
+    },
+    isItemInCart(item) {
+      return this.$store.state.cart.some((cartItem) => cartItem.id === item.id);
+    },
+    getItemQuantity(item) {
+      const existingItem = this.$store.state.cart.find((cartItem) => cartItem.id === item.id);
+      return existingItem ? existingItem.quantity : 1;
     },
     viewCartModal(item) {
       this.selectedItem = { ...item, quantity: 1 };
