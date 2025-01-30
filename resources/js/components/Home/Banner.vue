@@ -1,5 +1,5 @@
 <template>
-    <div class="banner position-relative text-center text-white">
+    <div class="banner position-relative text-center text-white" style="z-index: -1;">
       <!-- Background Image -->
       <div class="banner-image">
         <img src="banner-Image.png" alt="Traditional Chattogram Banner" />

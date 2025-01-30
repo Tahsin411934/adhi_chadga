@@ -8,44 +8,29 @@ use Illuminate\Database\Eloquent\Model;
 class FoodItem extends Model
 {
     use HasFactory;
-
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'food_items';
     public $timestamps = false;
-
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    // যেসব ফিল্ডগুলিকে mass assignable হবে সেগুলি নির্দিষ্ট করুন
     protected $fillable = [
-        'name',
-        'description',
-        'price',
-        'image_url',
-        'category_id',
-        'available',
+        'name', 'description', 'price', 'image_url', 'category_id', 'available', 'available_day'
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
+
     protected $casts = [
-        'available' => 'boolean',
-        'price' => 'float',
+        'available_day' => 'array', // 'available_day' ফিল্ডটি JSON আকারে স্টোর এবং রিট্রিভ হবে
     ];
 
-    /**
-     * Get the category associated with the food item.
-     */
+
+
+
+
+    public function getImageUrlPathAttribute()
+    {
+        return asset('storage/' . $this->image_url);
+    }
+
+
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class); // Assuming each FoodItem belongs to a category
     }
 }
