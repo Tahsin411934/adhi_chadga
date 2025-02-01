@@ -1,5 +1,5 @@
 <template>
-  <div class="container-sm mx-auto">
+  <div class="container-sm mx-auto shadow-lg p-5 mt-2" id="responsive-container">
     <h2 class="text-center mb-4">Create an Account</h2>
 
     <!-- Registration Form -->
@@ -62,14 +62,19 @@
         </div>
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">Register</button>
+      <!-- Submit Button -->
+      <button style="background: #050748;" type="submit" class="btn  w-100 text-white" :disabled="loading">
+        <span v-if="loading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        <span  v-else>Register</span>
+      </button>
     </form>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
-
+import Toastify from 'toastify-js';
+import 'toastify-js/src/toastify.css';
 export default {
   data() {
     return {
@@ -79,20 +84,29 @@ export default {
         password: '',
         password_confirmation: ''
       },
-      errors: {}
+      errors: {},
+      loading: false // Manage the loading state
     };
   },
   methods: {
     async submitForm() {
-      // Reset errors before sending the form
-      this.errors = {};
+      this.errors = {};  // Reset errors
+      this.loading = true; // Show loading spinner
 
       try {
         const response = await axios.post('/api/register', this.form);
 
         // Handle success response
-        console.log(response.data);
-        alert('Registration successful!');
+        
+        
+        Toastify({
+          text: "Registration successful! Please Login with Credential ",
+          duration: 3000,
+          gravity: "top",
+          position: "right",
+          backgroundColor: "green",
+        }).showToast();
+        this.$router.push('/login');
       } catch (error) {
         // Handle error response and display validation errors
         if (error.response && error.response.status === 422) {
@@ -100,6 +114,8 @@ export default {
         } else {
           alert('Something went wrong! Please try again.');
         }
+      } finally {
+        this.loading = false; // Hide loading spinner after submission
       }
     }
   }
@@ -107,5 +123,32 @@ export default {
 </script>
 
 <style scoped>
-/* No custom styles required since Bootstrap is handling the layout */
+#responsive-container {
+  width: 100%; /* Default for smaller screens */
+}
+
+@media (min-width: 768px) {
+  /* For medium devices and up (tablets and larger) */
+  #responsive-container {
+    width: 70%;
+  }
+}
+
+@media (min-width: 992px) { /* For larger devices */
+  #responsive-container {
+    width: 50%;
+  }
+}
+
+/* Optional: Adjust form padding for smaller screens */
+@media (max-width: 576px) {
+  #responsive-container {
+    padding: 15px; /* Reduce padding for very small screens */
+  }
+}
+
+.spinner-border {
+  border-width: 2px;
+  border-color: white transparent white transparent;
+}
 </style>

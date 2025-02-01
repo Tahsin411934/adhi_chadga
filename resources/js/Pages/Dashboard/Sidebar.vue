@@ -86,8 +86,8 @@ export default {
           icon: "fas fa-shopping-cart",
           isOpen: false,
           submenu: [
-            { id: 41, label: "Pending Orders", link: "/orders/pending", icon: "fas fa-clock" },
-            { id: 42, label: "Completed Orders", link: "/orders/completed", icon: "fas fa-check-circle" },
+            { id: 41, label: "Pending Orders", link: "/dashboard/pandingOrder", icon: "fas fa-clock" },
+            { id: 42, label: "Completed Orders", link: "/dashboard/completeOrder", icon: "fas fa-check-circle" },
           ],
         },
         { id: 5, label: "Settings", link: "/settings", icon: "fas fa-cogs" },

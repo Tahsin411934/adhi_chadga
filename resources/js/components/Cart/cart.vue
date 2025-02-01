@@ -6,15 +6,22 @@
             @click="openModal"
         >
             <!-- Cart Icon with Badge -->
-            <div class="cart-icon position-relative " style="z-index: 1;" @click="openModal">
-      <i class="fas fa-shopping-cart fa-lg"></i>
-      <span v-if="cartItems.length > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle " style="padding-right: 17px;">
-        {{ totalItems }}
-      </span>
-    </div>
+            <div
+                class="cart-icon position-relative"
+                style="z-index: 1"
+                @click="openModal"
+            >
+                <i class="fas fa-shopping-cart fa-lg"></i>
+                <span
+                    v-if="cartItems.length > 0"
+                    class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                    style="padding-right: 17px"
+                >
+                    {{ totalItems }}
+                </span>
+            </div>
 
             <!-- Review Your Cart Text -->
-           
         </div>
 
         <!-- Cart Modal -->
@@ -241,8 +248,12 @@ export default {
                 totalPrice: this.cartTotalPrice,
             };
 
-            console.log("Cart Data Submitted:", cartData);
-            alert("Cart data submitted successfully!");
+            this.$router.push({
+                path: "/order/confirm",
+                query: {
+                    cartData: JSON.stringify(cartData),
+                },
+            });
             this.closeModal();
         },
 

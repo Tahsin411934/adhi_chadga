@@ -53,23 +53,23 @@
           <div v-if="showDropdown" class="dropdown-menu show">
             <router-link to="/register" class="dropdown-item">Register</router-link>
             <router-link to="/login" class="dropdown-item">Login</router-link>
-            <router-link to="/dashboard" class="dropdown-item">Dashboard</router-link>
+            <router-link  to="/dashboard" class="dropdown-item">Dashboard</router-link>
           </div>
         </div>
         
         <div v-else>
           <!-- Profile Dropdown for Logged-in Users -->
-          <div class="dropdown d-inline-block" ref="profileDropdown">
+          <div class="dropdown d-inline-block" ref="profileDropdown" style="margin-right: 20px;">
             <button
-              class="btn bg-custom bg-hover text-white ms-3"
+              class="btn bg-custom bg-hover text-white ms-3" 
               @click="toggleProfileDropdown"
             >
-              <i class="fas fa-user-circle"></i>
+              <i class="fas fa-user-circle" ></i>
             </button>
             <div v-if="showProfileDropdown" class="dropdown-menu show">
               <router-link to="/profile" class="dropdown-item">Profile</router-link>
               <router-link to="/orders" class="dropdown-item">Orders</router-link>
-              <router-link to="/creation" class="dropdown-item">Creation</router-link>
+              <router-link to="/dashboard" class="dropdown-item">Dashboard</router-link>
               <button @click="logout" class="dropdown-item">Logout</button>
             </div>
           </div>
@@ -83,7 +83,7 @@
       </div>
       
       <!-- Hamburger Button (Visible on Mobile) -->
-      <button class="d-md-none btn btn-link" @click="toggleModal">
+      <button class="d-md-none btn btn-link" @click="toggleModal" style="">
         <i class="fas fa-bars"></i>
       </button>
     </div>

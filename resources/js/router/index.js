@@ -23,6 +23,11 @@ const routes = [
         component: () => import('../components/Auth/LoginForm.vue'), // Lazy-loaded
     },
     {
+        path: '/order/confirm',
+        name: 'ConfirmOrder',
+        component: () => import('../Pages/ConfirmOrder.vue'), // Lazy-loaded
+    },
+    {
         path: '/dashboard',
         name: 'Layout',
         component: () => import('../Pages/Dashboard/Layout.vue'),  // The parent component for the dashboard
@@ -41,6 +46,16 @@ const routes = [
             path: '/dashboard/items',  // Relative path for the login route under the dashboard
             name: 'Item',
             component: () => import('../Pages/Dashboard/FoodItem.vue'),
+          },
+          {
+            path: '/dashboard/pandingOrder',  // Relative path for the login route under the dashboard
+            name: 'PendingOrder',
+            component: () => import('../Pages/Dashboard/Order/PandingOrder.vue'),
+          },
+          {
+            path: '/dashboard/completeOrder',  // Relative path for the login route under the dashboard
+            name: 'completeOrder',
+            component: () => import('../Pages/Dashboard/Order/CompleteOrder.vue'),
           },
         ]
       }
