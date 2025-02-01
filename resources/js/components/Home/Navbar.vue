@@ -101,6 +101,7 @@
             <router-link to="/services" class="d-block py-2 text-custom" @click="toggleModal">Services</router-link>
             <router-link to="/work" class="d-block py-2 text-custom" @click="toggleModal">Work</router-link>
             <router-link to="/contact" class="d-block py-2 text-custom" @click="toggleModal">Contact</router-link>
+            <router-link to="/dashboard" class="d-block py-2 text-custom" @click="toggleModal">Dashboard</router-link>
 
             <!-- Conditional Render for Account Options in Modal -->
             <div v-if="!isLoggedIn">

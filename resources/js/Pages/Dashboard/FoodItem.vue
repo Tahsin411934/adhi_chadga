@@ -1,9 +1,12 @@
 <template>
   <div>
     <!-- Button to trigger modal -->
-    <button type="button" class="btn btn-primary" @click="openModal">
-      Open Modal
-    </button>
+    <div class="d-flex justify-content-between m-2">
+      <p>Manage Food Items</p>
+      <button type="button" class="btn btn-success" @click="openModal">
+        Add New Item
+      </button>
+    </div>
 
     <table class="table table-bordered">
       <thead>
@@ -21,27 +24,74 @@
       <tbody>
         <tr v-for="(item, index) in items" :key="item.id">
           <td>{{ index + 1 }}</td>
-          <td><input type="text" class="form-control" v-model="item.name" /></td>
-          <td><input v-model="item.description" class="form-control" required /></td>
-          <td><input type="number" v-model="item.price" class="form-control" step="0.01" required /></td>
-          <img :src="`/storage/${item.image_url}`" alt="Category image" width="50" height="50" v-if="item.image_url" />
+          <td>
+            <input
+              type="text"
+              class="form-control"
+              v-model="item.name"
+              :disabled="!item.isEditing"
+            />
+          </td>
+          <td>
+            <input
+              v-model="item.description"
+              class="form-control"
+              :disabled="!item.isEditing"
+            />
+          </td>
+          <td>
+            <input
+              type="number"
+              v-model="item.price"
+              class="form-control"
+              step="0.01"
+              :disabled="!item.isEditing"
+            />
+          </td>
+          <td>
+            <img
+              :src="`/storage/${item.image_url}`"
+              alt="Category image"
+              width="50"
+              height="50"
+              v-if="item.image_url"
+            />
+          </td>
 
           <td>
             <div class="checkbox-group">
               <div v-for="day in days" :key="day">
-                <!-- Bind each checkbox to item.available_day array -->
                 <input
+                  class="form-checkbox text-primary"
                   type="checkbox"
                   :value="day"
                   v-model="item.available_day"
+                  :disabled="!item.isEditing"
                 />
                 <label>{{ day }}</label>
               </div>
             </div>
           </td>
 
-          <td> 
-            <button @click="updateForm(item)">Update</button>
+          <td>
+            <!-- Toggle between Edit and Save button -->
+            <button
+              v-if="!item.isEditing"
+              @click="enableEdit(item)"
+              class="btn btn-primary px-4 my-1"
+            >
+              Edit
+            </button>
+            <button
+              v-if="item.isEditing"
+              @click="saveChanges(item)"
+              class="btn btn-success px-3 my-1"
+            >
+              Save
+            </button>
+            <button @click="deleteItem(item.id)" class="btn btn-danger">
+              Delete
+            </button>
           </td>
         </tr>
       </tbody>
@@ -56,46 +106,81 @@
       <div class="modal modal-visible">
         <div class="modal-dialog">
           <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title">Add Food Item</h5>
-              <button type="button" class="btn-close" @click="closeModal" aria-label="Close"></button>
-            </div>
+            <div class="modal-header"></div>
             <div class="modal-body">
+              <h5 class="modal-title mt-4">Add Food Item</h5>
               <form @submit.prevent="submitForm">
                 <!-- Name -->
                 <div class="form-group">
                   <label for="name">Name</label>
-                  <input type="text" v-model="FormData.name" class="form-control" required />
+                  <input
+                    type="text"
+                    v-model="FormData.name"
+                    class="form-control"
+                    required
+                  />
                 </div>
 
                 <!-- Description -->
                 <div class="form-group">
                   <label for="description">Description</label>
-                  <textarea v-model="FormData.description" class="form-control" required></textarea>
+                  <textarea
+                    v-model="FormData.description"
+                    class="form-control"
+                    required
+                  ></textarea>
                 </div>
 
                 <!-- Price -->
                 <div class="form-group">
                   <label for="price">Price</label>
-                  <input type="number" v-model="FormData.price" class="form-control" step="0.01" required />
+                  <input
+                    type="number"
+                    v-model="FormData.price"
+                    class="form-control"
+                    step="0.01"
+                    required
+                  />
                 </div>
 
                 <!-- Image File Upload -->
                 <div class="form-group">
                   <label for="image">Image</label>
-                  <input type="file" @change="handleFileUpload" class="form-control" accept="image/*" required />
+                  <input
+                    type="file"
+                    @change="handleFileUpload"
+                    class="form-control"
+                    accept="image/*"
+                    required
+                  />
                 </div>
 
                 <!-- Category ID -->
                 <div class="form-group">
-                  <label for="category_id">Category ID</label>
-                  <input type="number" v-model="FormData.category_id" class="form-control" required />
+                  <label for="category_id">Category</label>
+                  <select
+                    v-model="FormData.category_id"
+                    class="form-control"
+                    required
+                  >
+                    <option
+                      v-for="category in categories"
+                      :key="category.id"
+                      :value="category.id"
+                    >
+                      {{ category.name }}
+                    </option>
+                  </select>
                 </div>
 
                 <!-- Available -->
                 <div class="form-group">
                   <label for="available">Available</label>
-                  <select v-model="FormData.available" class="form-control" required>
+                  <select
+                    v-model="FormData.available"
+                    class="form-control"
+                    required
+                  >
                     <option value="1">Yes</option>
                     <option value="0">No</option>
                   </select>
@@ -106,7 +191,11 @@
                   <label>Available Days</label>
                   <div class="checkbox-group">
                     <div v-for="day in days" :key="day">
-                      <input type="checkbox" :value="day" v-model="FormData.available_day" />
+                      <input
+                        type="checkbox"
+                        :value="day"
+                        v-model="FormData.available_day"
+                      />
                       <label>{{ day }}</label>
                     </div>
                   </div>
@@ -114,7 +203,11 @@
 
                 <!-- Modal Footer -->
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" @click="closeModal">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    @click="closeModal"
+                  >
                     Close
                   </button>
                   <button type="submit" class="btn btn-primary">
@@ -147,6 +240,7 @@ export default {
         available_day: [], // Array for multiple selected days
       },
       items: [], // Store the list of food items
+      categories: [], // Store the list of categories
       days: [
         "Sunday",
         "Monday",
@@ -188,12 +282,18 @@ export default {
 
     async getData() {
       const res = await axiosInstance.get("/api/food-items");
-      this.items = res.data.map(item => {
+      this.items = res.data.map((item) => {
         return {
           ...item,
-          available_day: JSON.parse(item.available_day || '[]') // Parse available_day to array
-        }
+          available_day: JSON.parse(item.available_day || "[]"), // Parse available_day to array
+          isEditing: false, // Add isEditing flag
+        };
       });
+    },
+
+    async getCategories() {
+      const res = await axiosInstance.get("/api/categories");
+      this.categories = res.data;
     },
 
     async submitForm() {
@@ -213,15 +313,11 @@ export default {
         });
 
         // Send the form data to the backend
-        const res = await axiosInstance.post(
-          "/api/food-items",
-          formData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data", // Required for file uploads
-            },
-          }
-        );
+        const res = await axiosInstance.post("/api/food-items", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data", // Required for file uploads
+          },
+        });
         await this.getData();
         // Close the modal
         this.closeModal();
@@ -233,20 +329,36 @@ export default {
       }
     },
 
-    async updateForm(item) {
-      try {
-        // You can implement the update logic here
-        const response = await axiosInstance.put(`api/food-items/${item.id}`, item); 
-        console.log('Updated item:', response.data);  // Handle the response if necessary
-      } catch (error) {
-        console.error('Error updating item:', error);  // Handle errors
-      }
-    }
+    enableEdit(item) {
+      item.isEditing = true;
+    },
 
+    async saveChanges(item) {
+      try {
+        const response = await axiosInstance.put(
+          `api/food-items/${item.id}`,
+          item
+        );
+        console.log("Updated item:", response.data);
+        item.isEditing = false; // Disable editing after saving
+      } catch (error) {
+        console.error("Error updating item:", error);
+      }
+    },
+
+    async deleteItem(id) {
+      try {
+        await axiosInstance.delete(`api/food-items/${id}`);
+        this.items = this.items.filter((item) => item.id !== id); // Remove the deleted item from the list
+      } catch (error) {
+        console.error("Error deleting item:", error);
+      }
+    },
   },
 
   mounted() {
     this.getData();
+    this.getCategories(); // Fetch categories when the component is mounted
   },
 };
 </script>

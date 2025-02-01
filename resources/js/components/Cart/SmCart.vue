@@ -6,15 +6,24 @@
             @click="openModal"
         >
             <!-- Cart Icon with Badge -->
-            <div class="cart-icon position-relative " style="z-index: 1;" @click="openModal">
-      <i class="fas fa-shopping-cart fa-lg"></i>
-      <span v-if="cartItems.length > 0" class="badge bg-danger position-absolute top-0 start-100 translate-middle " style="padding-right: 17px;">
-        {{ totalItems }}
-      </span>
-    </div>
+            <div class="position-relative d-flex align-items-center">
+                <i class="fas fa-shopping-cart fa-lg"></i>
+                <span
+                    v-if="cartItems.length > 0"
+                    class="badge bg-danger position-absolute top-0 start-100 translate-middle"
+                    style="padding: 0.25rem 0.5rem"
+                >
+                    {{ totalItems }}
+                </span>
+            </div>
 
             <!-- Review Your Cart Text -->
-           
+            <div class="fs-6 fw-bold flex-grow-1 text-center mx-3">
+                Review Your Cart
+            </div>
+
+            <!-- Total Price -->
+            <div class="text-end">{{ cartTotalPrice }} TK</div>
         </div>
 
         <!-- Cart Modal -->
