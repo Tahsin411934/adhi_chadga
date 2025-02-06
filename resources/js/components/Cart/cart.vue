@@ -241,6 +241,7 @@ export default {
                 items: this.cartItems.map((item) => ({
                     id: item.id,
                     name: item.name,
+                    price: item.price,
                     quantity: item.quantity,
                     total: item.price * item.quantity,
                     selectedDay: item.selectedDay, // Include selected day in the submitted data
@@ -254,6 +255,7 @@ export default {
                     cartData: JSON.stringify(cartData),
                 },
             });
+            
             this.closeModal();
         },
 

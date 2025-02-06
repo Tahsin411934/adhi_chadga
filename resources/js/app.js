@@ -4,6 +4,7 @@ import App from './App.vue'; // Root Vue component
 import router from './router'; // Import router
 import store from './store/index'; // Import Vuex store
 
+
 // Import Bootstrap CSS
 import 'bootstrap/dist/css/bootstrap.min.css';
 

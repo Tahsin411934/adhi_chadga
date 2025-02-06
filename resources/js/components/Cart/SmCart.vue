@@ -243,6 +243,7 @@ export default {
                 items: this.cartItems.map((item) => ({
                     id: item.id,
                     name: item.name,
+                    price: item.price,
                     quantity: item.quantity,
                     total: item.price * item.quantity,
                     selectedDay: item.selectedDay, // Include selected day in the submitted data
@@ -250,8 +251,13 @@ export default {
                 totalPrice: this.cartTotalPrice,
             };
 
-            console.log("Cart Data Submitted:", cartData);
-            alert("Cart data submitted successfully!");
+            this.$router.push({
+                path: "/order/confirm",
+                query: {
+                    cartData: JSON.stringify(cartData),
+                },
+            });
+            
             this.closeModal();
         },
 

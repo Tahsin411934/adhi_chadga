@@ -24,6 +24,7 @@ export default defineConfig({
     resolve: {
         alias: {
             vue: 'vue/dist/vue.esm-bundler.js',
+            leaflet: 'leaflet/dist/leaflet.js',
         },
     },
 });

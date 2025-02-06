@@ -66,11 +66,11 @@
                                     )
                                 "
                                 style="font-size: 10px"
-                                >order for today or later, <br> <br> you can specify order
+                                >order for <span style="color: #D97706;">Today</span> or later, <br> <br> you can specify order
                                 date during checkout
                             </span>
                             <span v-else style="font-size: 10px"
-                                > order for Next {{ findClosestDay(JSON.parse(item.available_day)) }} or later, <br> you can specify * order
+                                > order for Next <span style="color: #D97706;">{{ findClosestDay(JSON.parse(item.available_day)) }} </span>or later, <br> you can specify * order
                                 date during checkout
                             </span>
                             

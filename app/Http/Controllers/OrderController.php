@@ -45,21 +45,16 @@ class OrderController extends Controller
      * Store a newly created order with multiple order items.
      */
     public function store(Request $request)
-    { 
-        $request->validate([
-            'user_id' => 'required',
-            'total_price' => 'required|numeric|min:0',
-            'status' => 'required|string',
-            
-        ]);
+    {  
+       
 
         
         try {
             // Create the order
             $order = Order::create([
-                'user_id' => $request->user_id,
+                'user_id' => 1,
                 'total_price' => $request->total_price,
-                'status' => $request->status,
+                'status' => "pending",
             ]);
 
             // Insert multiple order items
